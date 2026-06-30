@@ -28,9 +28,9 @@ exports.updateMenuCategory = (req, res) => {
   }
 };
 
-exports.deleteMenuCategory = (req, res) => {
+exports.removeMenuCategory = (req, res) => {
   try {
-    res.send("Hello delete MenuCategory");
+    res.send("Hello remove MenuCategory");
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server Error" });

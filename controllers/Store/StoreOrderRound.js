@@ -1,75 +1,65 @@
 
 
 
-exports.getStore = (req, res) => {
+exports.listOrderRound = (req, res) => {
   try {
-    res.send("Hello get Store");
+    res.send("Hello list OrderRound");
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-exports.updateStore = (req, res) => {
+exports.addOrderRound = (req, res) => {
   try {
-    res.send("Hello update Store");
+    res.send("Hello add OrderRound");
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-exports.removeStore = (req, res) => {
+exports.updateOrderRound = (req, res) => {
   try {
-    res.send("Hello remove Store");
+    res.send("Hello update OrderRound");
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-exports.updateDeliveryZone = (req, res) => {
+exports.removeOrderRound = (req, res) => {
   try {
-    res.send("Hello update Store");
+    res.send("Hello remove OrderRound");
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-exports.removeDeliveryZone = (req, res) => {
+exports.changePattern = (req, res) => {
   try {
-    res.send("Hello remove DeliveryZone");
+    res.send("Hello change Pattern");
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-exports.changeRainSurcharge = (req, res) => {
+exports.orderLimit = (req, res) => {
   try {
-    res.send("Hello change RainSurcharge");
+    res.send("Hello order Limit");
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-exports.changeStoreStatus = (req, res) => {
+exports.changeRoundStatus = (req, res) => {
   try {
-    res.send("Hello change Store Status");
+    res.send("Hello change Round Status");
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
-
-exports.changeOrderMode = (req, res) => {
-  try {
-    res.send("Hello change OrderMode");
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
-
