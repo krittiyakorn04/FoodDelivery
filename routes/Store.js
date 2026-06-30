@@ -37,6 +37,7 @@ router.put("/store/profile", updateStore);
 router.patch("/store/profile/:id/stutus", removeStore); //ลบ
 
 router.put("/store/delivery-zones/:id", updateDeliveryZone);
+router.put("/store/delivery-zonesv6/:id", updateDeliveryZone);
 
 //MenuCategory
 router.get("/store/listMenuCategory", listMenuCategory);
