@@ -1,0 +1,370 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ENUMS
+
+enum memberRole {
+  CUSTOMER
+  MERCHANT
+  ADMIN
+}
+
+enum customerStatus {
+  ACTIVE
+  BANNED
+}
+
+enum merchantStatus {
+  PENDING // รอ admin approve
+  ACTIVE // เปิดร้านได้
+  SUSPENDED // ถูก suspend
+  BANNED //โดนแบน 
+}
+
+enum storeStatus {
+  OPEN
+  CLOSED
+  BUSY // ไม่รับออเดอร์ชั่วคราว
+}
+
+enum deliveryType {
+  PICKUP // รับเอง
+  DELIVERY // ให้ร้านส่ง
+}
+
+enum deliveryStatus {
+  PENDING //พร้อมแล้ว (รอรับ/ส่ง)
+  DELIVERING  // กำลังส่ง
+  COMPLETED // เสร็จสิ้น
+}
+
+enum orderMode {
+  ROUND // รับเป็นรอบ
+  REALTIME // รับตลอดเวลา
+}
+
+enum orderStatus {
+  PENDING // รอร้านยืนยัน
+  CONFIRMED // ร้านยืนยันแล้ว
+  PREPARING // กำลังทำอาหาร
+  COMPLETED // เสร็จสิ้น
+  CANCELLED // ยกเลิก
+}
+
+enum PaymentMethod {
+  PROMPTPAY
+  BANK_TRANSFER
+}
+
+enum paymentStatus {
+  PENDING // รอลูกค้าโอน
+  SLIP_UPLOADED // แนบสลิปแล้ว รอร้าน confirm
+  CONFIRMED // ร้าน confirm แล้ว
+  REJECTED // ร้านปฏิเสธสลิป
+}
+
+enum roundStatus {
+  OPEN // กำลังรับออเดอร์
+  CLOSED // ปิดรับแล้ว
+  FULL //เต็มแล้ว
+}
+
+enum deliveryZone {
+  ThaKhonYang
+  KhamRiang
+  MainGate
+  Yjunction
+  BanDonna
+}
+
+enum CategoryStore {
+  BAKERY
+  SOMTUM
+}
+
+enum OutOfStock {
+  INFORM
+  EXCHANGE
+}
+
+// User
+
+model Customer {
+  id       Int            @id @default(autoincrement())
+  username     String
+  email    String         @unique
+  phone    String         @unique
+  password String?
+  picture  String?
+  role     memberRole     @default(CUSTOMER)
+  status   customerStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  addresses Address[]
+  orders    Order[]
+  reviews   Review[]
+  cart      Cart[]
+}
+
+model Address {
+  id         Int      @id @default(autoincrement())
+  customerId Int
+  label      String // เช่น "หอพัก", "บ้าน"
+  address    String
+  lat        Float?
+  lng        Float?
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  customer Customer @relation(fields: [customerId], references: [id])
+}
+
+// STORE
+
+model Store {
+  id       Int     @id @default(autoincrement())
+  username String  @unique
+  email    String  @unique
+  phone    String  @unique
+  password String? @unique
+
+  picture    String?
+  storeName  String        @unique
+  Notice     String?       @db.Text //ติดไว้ก่อน
+  imageStore String?
+  category   CategoryStore
+  address    String
+  lat        Float?
+  lng        Float?
+
+  role          memberRole     @default(MERCHANT)
+  accountStatus merchantStatus @default(PENDING)
+  status        storeStatus    @default(CLOSED)
+  orderMode     orderMode      @default(REALTIME)
+
+  // วัน - เวลาเปิด/ปิด 
+  dayOpen   String
+  timeOpen  String
+  timeClose String
+
+  // Payment
+  promptpayNumber String?
+
+  bankName        String?
+  bankAccount     String?
+  bankAccountName String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  menuCategories MenuCategory[]
+  menus          Menu[]
+  orderRound     OrderRound[]
+  deliveryRounds Delivery[]
+  orders         Order[]
+  reviews        Review[]
+  carts          Cart[]
+  deliveryZone   DeliveryZone[]
+}
+
+model DeliveryZone {
+  id                  Int          @id @default(autoincrement())
+  storeId             Int
+  nameZone            deliveryZone // เช่น "ท่าขอนยาง", "ขามเรียง"
+  maxDistance         Float? // km — รัศมีสูงสุดของโซนนี้
+  fee                 Float        @default(0) // ค่าส่งของโซนนี้
+  rainSurcharge       Float        @default(0) // บวกเพิ่มตอนฝนตก
+  rainSurchargeActive Boolean      @default(false) //ร้านเปิดสวิตช์
+
+  store Store @relation(fields: [storeId], references: [id])
+}
+
+// MENU
+
+model MenuCategory {
+  id       Int    @id @default(autoincrement())
+  storeId  Int
+  nameCate String
+
+  store Store  @relation(fields: [storeId], references: [id])
+  menus Menu[]
+}
+
+model Menu {
+  id          Int      @id @default(autoincrement())
+  storeId     Int
+  categoryId  Int
+  menuItem    String
+  description String?
+  price       Float
+  imageUrl    String
+  isAvailable Boolean  @default(true)
+  sold        Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category  MenuCategory @relation(fields: [categoryId], references: [id])
+  store     Store         @relation(fields: [storeId], references: [id])
+  options   MenuOption[]
+  menuItems MenuOnCart[]
+}
+
+model MenuOption {
+  id         Int     @id @default(autoincrement())
+  menuId     Int
+  label      String // เช่น "ความเผ็ด", "ไข่"
+  required   Boolean @default(false) //บังคับเลือกหรือไม่บังคับ
+  maxRequire Int
+
+  menu    Menu           @relation(fields: [menuId], references: [id])
+  choices OptionChoice[]
+}
+
+model OptionChoice {
+  id         Int    @id @default(autoincrement())
+  optionId   Int
+  name       String // เช่น "ไม่เผ็ด", "เผ็ดมาก"
+  extraPrice Float  @default(0)
+
+  option MenuOption @relation(fields: [optionId], references: [id])
+}
+
+// ORDER ROUND
+
+model OrderRound {
+  id            Int     @id @default(autoincrement())
+  storeId       Int
+  roundNumber   Int // รอบที่เท่าไหร่
+  startTime     String
+  endTime       String
+  patternManual Boolean @default(false)
+
+  durationMinutes Int
+  hasOrderLimit   Boolean @default(false)
+  maxOrders       Int?
+  currentOrders   Int     @default(0)
+
+  status    roundStatus @default(OPEN)
+  createdAt DateTime    @default(now())
+  isManual  Boolean     @default(false)
+
+  store    Store      @relation(fields: [storeId], references: [id])
+  delivery Delivery[]
+  orders   Order[]
+}
+
+model Order {
+  id           Int          @id @default(autoincrement())
+  customerId   Int
+  storeId      Int
+  orderRoundId Int? // เชื่อม OrderRound 
+  deliveryId   Int
+  deliveryType deliveryType @default(DELIVERY)
+  status       orderStatus  @default(PENDING)
+  totalPrice   Float
+  note         String?      @db.Text
+  outOfStock   OutOfStock   @default(INFORM)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customer   Customer     @relation(fields: [customerId], references: [id])
+  store      Store        @relation(fields: [storeId], references: [id])
+  orderRound OrderRound?  @relation(fields: [orderRoundId], references: [id])
+  delivery   Delivery     @relation(fields: [deliveryId], references: [id])
+  payment    Payment?
+  review     Review?
+  menu       MenuOnCart[]
+}
+
+model Delivery {
+  id           Int         @id @default(autoincrement())
+  storeId      Int
+  orderRoundId Int?
+  status       deliveryStatus @default(PENDING)
+  createdAt    DateTime    @default(now())
+
+  store      Store       @relation(fields: [storeId], references: [id])
+  orderRound OrderRound? @relation(fields: [orderRoundId], references: [id])
+  orders     Order[]
+}
+
+model Cart {
+  id        Int   @id @default(autoincrement())
+  orderById Int
+  storeId   Int
+  cartTotal Float
+
+  customer Customer     @relation(fields: [orderById], references: [id])
+  store    Store        @relation(fields: [storeId], references: [id])
+  menu     MenuOnCart[]
+}
+
+model MenuOnCart {
+  id      Int     @id @default(autoincrement())
+  cartId  Int
+  menuId  Int
+  orderId Int?
+  count   Int
+  price   Float
+  options String @db.Text 
+
+  cart  Cart   @relation(fields: [cartId], references: [id])
+  menu  Menu   @relation(fields: [menuId], references: [id])
+  order Order? @relation(fields: [orderId], references: [id])
+}
+
+// PAYMENT
+
+model Payment {
+  id             Int           @id @default(autoincrement())
+  orderId        Int           @unique
+  method         PaymentMethod 
+  status         paymentStatus @default(PENDING)
+  amount         Float
+  slipImageUrl   String
+  confirmedAt    DateTime
+  rejectedReason String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id])
+}
+
+// REVIEW
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  orderId    Int      @unique
+  customerId Int
+  storeId    Int
+  rating     Int // 1-5
+  comment    String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  order    Order    @relation(fields: [orderId], references: [id])
+  customer Customer @relation(fields: [customerId], references: [id])
+  store    Store    @relation(fields: [storeId], references: [id])
+}
+
+model Admin {
+  id        Int        @id @default(autoincrement())
+  email     String     @unique
+  password  String
+  name      String
+  role      memberRole @default(ADMIN)
+  createdAt DateTime   @default(now())
+}
