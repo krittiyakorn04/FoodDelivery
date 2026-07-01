@@ -206,7 +206,7 @@ model MenuCategory {
 model Menu {
   id          Int      @id @default(autoincrement())
   storeId     Int
-  categoryId  Int
+  categoryId  Int?
   menuItem    String
   description String?
   price       Float
@@ -216,7 +216,7 @@ model Menu {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  category  MenuCategory @relation(fields: [categoryId], references: [id])
+  category  MenuCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   store     Store         @relation(fields: [storeId], references: [id])
   options   MenuOption[]
   menuItems MenuOnCart[]
@@ -229,7 +229,7 @@ model MenuOption {
   required   Boolean @default(false) //บังคับเลือกหรือไม่บังคับ
   maxRequire Int
 
-  menu    Menu           @relation(fields: [menuId], references: [id])
+  menu    Menu           @relation(fields: [menuId], references: [id], onDelete: Cascade)
   choices OptionChoice[]
 }
 
@@ -239,7 +239,7 @@ model OptionChoice {
   name       String // เช่น "ไม่เผ็ด", "เผ็ดมาก"
   extraPrice Float  @default(0)
 
-  option MenuOption @relation(fields: [optionId], references: [id])
+  option MenuOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
 }
 
 // ORDER ROUND
@@ -322,8 +322,8 @@ model MenuOnCart {
   price   Float
   options String @db.Text 
 
-  cart  Cart   @relation(fields: [cartId], references: [id])
-  menu  Menu   @relation(fields: [menuId], references: [id])
+  cart  Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  menu  Menu   @relation(fields: [menuId], references: [id], onDelete: Cascade)
   order Order? @relation(fields: [orderId], references: [id])
 }
 
