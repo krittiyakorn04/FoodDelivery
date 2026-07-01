@@ -27,8 +27,16 @@ const {
   profileUser,
   updateProfileUser,
 } = require("../controllers/User/UserProfile");
-const { getDelivery, readDelivery, reaUserDelivery } = require("../controllers/User/UserDelivery");
-const { getReview, updeteReview, removeReview } = require("../controllers/User/UserReview");
+const {
+  getDelivery,
+  readDelivery,
+  reaUserDelivery,
+} = require("../controllers/User/UserDelivery");
+const {
+  getReview,
+  removeReview,
+  updateReview,
+} = require("../controllers/User/UserReview");
 
 const router = express.Router();
 
@@ -66,8 +74,7 @@ router.get("/user/delivery/:id", reaUserDelivery);
 
 //Review
 router.get("/user/review/:id", getReview);
-router.post("/user/review/:id", updeteReview);
+router.post("/user/review/:id", updateReview);
 router.delete("/user/review/:id", removeReview);
-
 
 module.exports = router;

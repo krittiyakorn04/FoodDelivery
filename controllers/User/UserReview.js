@@ -10,7 +10,7 @@ exports.getReview = (req,res)=>{
     }
 }
 
-exports.updeteReview = (req,res)=>{
+exports.updateReview = (req,res)=>{
     try {
         res.send('Hello updete Review')
     } catch (error) {
