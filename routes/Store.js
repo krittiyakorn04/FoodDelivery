@@ -14,6 +14,7 @@ const {
   changeRainSurcharge,
   changeStoreStatus,
   changeOrderMode,
+  changeStoreOpen,
 } = require("../controllers/Store/StoreCreate");
 const {
   listMenuCategory,
@@ -34,11 +35,11 @@ const {
 const {
   addOrderRound,
   changePattern,
-  orderLimit,
   changeRoundStatus,
   updateOrderRound,
   removeOrderRound,
   listOrderRound,
+  orderLimit,
 } = require("../controllers/Store/StoreOrderRound");
 const {
   readOrder,
@@ -57,7 +58,7 @@ const router = express.Router();
 //Authen
 router.post("/store/register", register); //+post บช.ร้าน
 router.post("/store/login", login);
-router.post("/store/current-restau", currentRestau); //ยืนยันการเข้าสู่ระบบ
+router.get("/store/current-restau", currentRestau); //ยืนยันการเข้าสู่ระบบ
 
 //createStore //สร้างร้าน
 router.get("/store/profile", getStore);
@@ -70,7 +71,8 @@ router.delete("/store/delivery-zones/:id", removeDeliveryZone);
 router.patch("/store/rainSurchargeActive", changeRainSurcharge);
 
 router.patch("/store/storeStatus", changeStoreStatus);
-router.patch("/store/storeStatus", changeOrderMode);
+router.patch("/store/storeOpen", changeStoreOpen);
+router.patch("/store/storeOrderMode", changeOrderMode);
 
 //MenuCategory
 router.get("/store/category", listMenuCategory);
@@ -95,7 +97,7 @@ router.put("/store/order-round/:id", updateOrderRound);
 router.delete("/store/order-round/:id", removeOrderRound);
 
 router.patch("/store/pattern", changePattern);
-router.put("/store/order-round/order-limit", orderLimit);
+router.put("/store/order-limit", orderLimit);
 router.patch("/store/round/:id/status", changeRoundStatus);
 
 //Order

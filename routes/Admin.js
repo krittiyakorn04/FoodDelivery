@@ -12,9 +12,9 @@ const {
 const router = express.Router();
 
 //Authen
-router.post("/restau/register", register);
-router.post("/restau/login", login);
-router.post("/restau/current-restau", currentAdmin);
+router.post("/admin/register", register);
+router.post("/admin/login", login);
+router.get("/admin/current-restau", currentAdmin);
 
 //Admin
 router.patch("/admin/:id/customerStatus", changeCustomerStatus);

@@ -64,6 +64,15 @@ exports.changeStoreStatus = (req, res) => {
   }
 };
 
+exports.changeStoreOpen = (req, res) => {
+  try {
+    res.send("Hello change Store Status");
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 exports.changeOrderMode = (req, res) => {
   try {
     res.send("Hello change OrderMode");

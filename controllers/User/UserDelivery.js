@@ -10,9 +10,9 @@ exports.getDelivery = (req,res)=>{
     }
 }
 
-exports.reaUserDelivery = (req,res)=>{
+exports.readUserDelivery = (req,res)=>{
     try {
-        res.send('Hello get Delivery')
+        res.send('Hello read User Delivery')
     } catch (error) {
         console.log(error)
         res.status(500).json({ message: "Server Error" })

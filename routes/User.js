@@ -30,7 +30,7 @@ const {
 const {
   getDelivery,
   readDelivery,
-  reaUserDelivery,
+  readUserDelivery,
 } = require("../controllers/User/UserDelivery");
 const {
   getReview,
@@ -70,7 +70,7 @@ router.post("/user/payment/:id", uploadSlip);
 
 //Delivery
 router.get("/user/delivery", getDelivery);
-router.get("/user/delivery/:id", reaUserDelivery);
+router.get("/user/delivery/:id", readUserDelivery);
 
 //Review
 router.get("/user/review/:id", getReview);

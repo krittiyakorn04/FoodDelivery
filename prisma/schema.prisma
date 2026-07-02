@@ -45,7 +45,7 @@ enum deliveryType {
 
 enum deliveryStatus {
   PENDING //พร้อมแล้ว (รอรับ/ส่ง)
-  DELIVERING  // กำลังส่ง
+  DELIVERING // กำลังส่ง
   COMPLETED // เสร็จสิ้น
 }
 
@@ -102,7 +102,7 @@ enum OutOfStock {
 
 model Customer {
   id       Int            @id @default(autoincrement())
-  username     String
+  username String
   email    String         @unique
   phone    String         @unique
   password String?
@@ -156,6 +156,7 @@ model Store {
   orderMode     orderMode      @default(REALTIME)
 
   // วัน - เวลาเปิด/ปิด 
+  openAuto  Boolean
   dayOpen   String
   timeOpen  String
   timeClose String
@@ -291,11 +292,11 @@ model Order {
 }
 
 model Delivery {
-  id           Int         @id @default(autoincrement())
+  id           Int            @id @default(autoincrement())
   storeId      Int
   orderRoundId Int?
   status       deliveryStatus @default(PENDING)
-  createdAt    DateTime    @default(now())
+  createdAt    DateTime       @default(now())
 
   store      Store       @relation(fields: [storeId], references: [id])
   orderRound OrderRound? @relation(fields: [orderRoundId], references: [id])
@@ -314,13 +315,13 @@ model Cart {
 }
 
 model MenuOnCart {
-  id      Int     @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   cartId  Int
   menuId  Int
   orderId Int?
   count   Int
   price   Float
-  options String @db.Text 
+  options String @db.Text
 
   cart  Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade)
   menu  Menu   @relation(fields: [menuId], references: [id], onDelete: Cascade)
@@ -332,7 +333,7 @@ model MenuOnCart {
 model Payment {
   id             Int           @id @default(autoincrement())
   orderId        Int           @unique
-  method         PaymentMethod 
+  method         PaymentMethod
   status         paymentStatus @default(PENDING)
   amount         Float
   slipImageUrl   String
