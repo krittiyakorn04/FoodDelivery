@@ -1,25 +1,83 @@
+const prisma = require("../../config/prisma");
 
+const bcrypt = require("bcryptjs");
 
-
-exports.getStore = (req, res) => {
+exports.getStore = async (req, res) => {
   try {
-    res.send("Hello get Store");
+    const store = await prisma.store.findFirst({
+      where: {
+        id: req.store.id,
+      },
+    });
+
+    res.send(store);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-exports.updateStore = (req, res) => {
+exports.updateStore = async (req, res) => {
   try {
-    res.send("Hello update Store");
+    const {
+      email,
+      password, //อย่าลืม 
+      username,
+      phone,
+
+      Notice,
+      storeName,
+      category,
+      address,
+      dayOpen,
+      timeOpen,
+      timeClose,
+      openAuto,
+      promptpayNumber,
+      bankName,
+      bankAccount,
+      bankAccountName,
+    } = req.body;
+    const { id } = req.store;
+
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    //เขียนด้วย  email,password เก่า ใหม่ ไม่ใส่แต่แรก ,username , phone ห้ามซ้ำ,
+      // storeName ห้ามซ้ำ เปลี่ยนได้กี่ครั้ง
+
+    const store = await prisma.store.update({
+      where: {
+        id: req.store.id,
+      },
+      data: {
+        email,
+        password: hashPassword,
+        username,
+        phone,
+
+        Notice,
+        storeName,
+        category,
+        address,
+        dayOpen,
+        timeOpen,
+        timeClose,
+        openAuto,
+        promptpayNumber,
+        bankName,
+        bankAccount,
+        bankAccountName,
+      },
+    });
+
+    res.send(store);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
 };
 
-exports.removeStore = (req, res) => {
+exports.removeStore = (req, res) => { //หนังชีวิต
   try {
     res.send("Hello remove Store");
   } catch (error) {
@@ -81,4 +139,3 @@ exports.changeOrderMode = (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-

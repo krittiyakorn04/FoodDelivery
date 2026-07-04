@@ -52,6 +52,7 @@ const {
   changeStatusDelivery,
 } = require("../controllers/Store/StoreDelivery");
 const { rejectedPayment, changeStatusPayment } = require("../controllers/Store/StorePayment");
+const {  authStore } = require("../middlewares/auth");
 
 const router = express.Router();
 
@@ -61,8 +62,8 @@ router.post("/store/login", login);
 router.get("/store/current-restau", currentRestau); //ยืนยันการเข้าสู่ระบบ
 
 //createStore //สร้างร้าน
-router.get("/store/profile", getStore);
-router.put("/store/profile", updateStore);
+router.get("/store/profile", authStore, getStore);
+router.put("/store/profile",authStore, updateStore);
 router.patch("/store/profile/:id/stutus", removeStore); //ลบ ปุ่มลบร้านแต่จริงๆเก็บไว้แต่เปลี่ยนสถานะ
 //update password
 
@@ -75,14 +76,14 @@ router.patch("/store/storeOpen", changeStoreOpen);
 router.patch("/store/storeOrderMode", changeOrderMode);
 
 //MenuCategory
-router.get("/store/category", listMenuCategory);
-router.post("/store/category", addMenuCategory);
-router.put("/store/category/:id", updateMenuCategory);
-router.delete("/store/category/:id", removeMenuCategory);
+router.get("/store/category", authStore, listMenuCategory);
+router.post("/store/category", authStore, addMenuCategory);
+router.put("/store/category/:id", authStore, updateMenuCategory);
+router.delete("/store/category/:id", authStore, removeMenuCategory);
 
 //Menu
-router.get("/store/menu", getMenu);
-router.post("/store/addMenu", addMenu);
+router.get("/store/menu", authStore, getMenu);
+router.post("/store/addMenu", authStore, addMenu);
 router.put("/store/updateMenu/:id", updateMenu);
 router.delete("/store/deleteMenu/:id", removeMenu);
 router.patch("/store/availability/:id/status", changeAvailabilityStatus);

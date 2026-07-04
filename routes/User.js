@@ -45,6 +45,8 @@ router.post("/user/register", register);
 router.post("/user/login", login);
 router.get("/user/current-user", currentUser);
 
+//ลูกค้าเข้าดูร้าน
+
 //Address
 router.get("/user/address", listAddress);
 router.post("/user/address", addAddress);

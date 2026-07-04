@@ -4,12 +4,12 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 // ENUMS
@@ -139,16 +139,16 @@ model Store {
   username String  @unique
   email    String  @unique
   phone    String  @unique
-  password String? @unique
+  password String?
 
-  picture    String?
+  picture    String? //
   storeName  String        @unique
   Notice     String?       @db.Text //ติดไว้ก่อน
-  imageStore String?
+  imageStore String? //
   category   CategoryStore
   address    String
-  lat        Float?
-  lng        Float?
+  lat        Float? //
+  lng        Float? //
 
   role          memberRole     @default(MERCHANT)
   accountStatus merchantStatus @default(PENDING)
@@ -156,7 +156,7 @@ model Store {
   orderMode     orderMode      @default(REALTIME)
 
   // วัน - เวลาเปิด/ปิด 
-  openAuto  Boolean
+  openAuto  Boolean @default(false)
   dayOpen   String
   timeOpen  String
   timeClose String
@@ -179,6 +179,7 @@ model Store {
   reviews        Review[]
   carts          Cart[]
   deliveryZone   DeliveryZone[]
+
 }
 
 model DeliveryZone {
@@ -221,6 +222,7 @@ model Menu {
   store     Store         @relation(fields: [storeId], references: [id])
   options   MenuOption[]
   menuItems MenuOnCart[]
+  images    Image[]
 }
 
 model MenuOption {
@@ -370,5 +372,15 @@ model Admin {
   createdAt DateTime   @default(now())
 }
 
+model Image {
+  id         Int      @id @default(autoincrement())
+  asset_id   String
+  public_id  String
+  url        String
+  secure_url String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-
+  menu   Menu? @relation(fields: [menuId], references: [id])
+  menuId Int?
+}
