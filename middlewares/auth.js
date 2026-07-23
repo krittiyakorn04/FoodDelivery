@@ -31,3 +31,43 @@ exports.authStore = async (req, res, next) => {
   }
 }
 
+//เอาไว้ก่อน
+exports.currentRestau = async (req, res) => {
+  try {
+    const store = await prisma.store.findFirst({
+      where: { id: req.store.id },  
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        storeName: true,
+        role: true,
+        status: true
+      }
+    })
+    res.json({ store })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: "Server Error" })
+  }
+}
+
+exports.currentUser = async (req, res) => {
+  try {
+    const store = await prisma.store.findFirst({
+      where: { id: req.store.id },  
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        storeName: true,
+        role: true,
+        status: true
+      }
+    })
+    res.json({ store })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: "Server Error" })
+  }
+}

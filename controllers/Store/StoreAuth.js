@@ -25,6 +25,7 @@ exports.register = async (req, res) => {
       bankName,
       bankAccount,
       bankAccountName,
+      
     } = req.body;
 
     // เช็คว่ากรอกหรือยัง
@@ -52,12 +53,14 @@ exports.register = async (req, res) => {
     const hashPassword = await bcrypt.hash(password, 10);
     
     //ไม่ซ้ำก็ลงเลย 
-    await prisma.store.create({
+    const newStore = await prisma.store.create({
       data: {
         email,
         password: hashPassword,
         username,
         phone,
+        
+        Notice, 
         storeName,
         category,
         address,
@@ -72,8 +75,24 @@ exports.register = async (req, res) => {
         bankAccountName,
       },
     });
+   //สร้าง Payload
+    const payload = {
+      id: newStore.id,
+      username: newStore.username,
+      role: newStore.role
+    }
 
-    res.send("Register Success");
+    //generate token
+    jwt.sign(payload,process.env.SECRET,{
+      expiresIn:'1d'
+    },(err,token)=>{
+      if(err){
+        return res.status(500).json({ message:"Server Error" })
+      }
+      res.json({payload,token})
+    })
+    
+
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server Error" }); //@unique ต้องเขียนด้วย
@@ -127,11 +146,25 @@ exports.login = async (req, res) => {
   }
 };
 
+
 exports.currentRestau = async (req, res) => {
   try {
-    res.send("Hello Current Restau");
+
+    const store = await prisma.store.findFirst({
+      where:{
+        username: req.store.username
+      },
+      select:{
+        id:true,
+        email:true,
+        username:true,
+        role:true
+      }
+    })
+
+    res.json({store});
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
-}; //ติดไว้ก่อน
+}; 

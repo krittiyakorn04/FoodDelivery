@@ -47,9 +47,9 @@ CREATE TABLE `Store` (
     `lng` DOUBLE NULL,
     `role` ENUM('CUSTOMER', 'MERCHANT', 'ADMIN') NOT NULL DEFAULT 'MERCHANT',
     `accountStatus` ENUM('PENDING', 'ACTIVE', 'SUSPENDED', 'BANNED') NOT NULL DEFAULT 'PENDING',
-    `status` ENUM('OPEN', 'CLOSED', 'BUSY') NOT NULL DEFAULT 'CLOSED',
+    `status` ENUM('OPEN', 'CLOSED', 'BUSY', 'DELETED') NOT NULL DEFAULT 'CLOSED',
     `orderMode` ENUM('ROUND', 'REALTIME') NOT NULL DEFAULT 'REALTIME',
-    `openAuto` BOOLEAN NOT NULL,
+    `openAuto` BOOLEAN NOT NULL DEFAULT false,
     `dayOpen` VARCHAR(191) NOT NULL,
     `timeOpen` VARCHAR(191) NOT NULL,
     `timeClose` VARCHAR(191) NOT NULL,
@@ -57,6 +57,7 @@ CREATE TABLE `Store` (
     `bankName` VARCHAR(191) NULL,
     `bankAccount` VARCHAR(191) NULL,
     `bankAccountName` VARCHAR(191) NULL,
+    `usernameChangedAt` DATETIME(3) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -139,9 +140,11 @@ CREATE TABLE `OrderRound` (
     `hasOrderLimit` BOOLEAN NOT NULL DEFAULT false,
     `maxOrders` INTEGER NULL,
     `currentOrders` INTEGER NOT NULL DEFAULT 0,
-    `status` ENUM('OPEN', 'CLOSED', 'FULL') NOT NULL DEFAULT 'OPEN',
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `cutoffMinutes` INTEGER NOT NULL DEFAULT 20,
+    `status` ENUM('PENDING', 'OPEN', 'CLOSED') NOT NULL DEFAULT 'OPEN',
     `isManual` BOOLEAN NOT NULL DEFAULT false,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

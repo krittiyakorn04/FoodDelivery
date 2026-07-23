@@ -2,6 +2,7 @@ const prisma = require("../../config/prisma");
 
 
 
+//เสร็จ
 exports.listMenuCategory = async (req, res) => {
   try { 
 
@@ -81,7 +82,9 @@ exports.updateMenuCategory = async (req, res) => {
       where:{
         nameCate,
         storeId,
-        NOT: {id: Number(req.params.id)}
+        NOT: {
+          id: Number(storeId)
+        }
       }
     })
     
@@ -127,7 +130,7 @@ exports.removeMenuCategory = async (req, res) => {
     }
 
     if (existCategory.menus.length > 0){
-      await prisma.menu.update({
+      await prisma.menu.updateMany({
         where:{
           categoryId: Number(req.params.id),
         },

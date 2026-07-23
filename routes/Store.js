@@ -9,12 +9,14 @@ const {
   deleteStore,
   getStore,
   removeStore,
-  updateDeliveryZone,
-  removeDeliveryZone,
-  changeRainSurcharge,
   changeStoreStatus,
   changeOrderMode,
   changeStoreOpen,
+  getProfile,
+  getallStores,
+  updateEmail,
+  updatePassword,
+  updateUsername,
 } = require("../controllers/Store/StoreCreate");
 const {
   listMenuCategory,
@@ -50,6 +52,10 @@ const {
   listDelivery,
   readDelivery,
   changeStatusDelivery,
+  updateDeliveryZone,
+  removeDeliveryZone,
+  changeRainSurcharge,
+  addDeliveryZone,
 } = require("../controllers/Store/StoreDelivery");
 const { rejectedPayment, changeStatusPayment } = require("../controllers/Store/StorePayment");
 const {  authStore } = require("../middlewares/auth");
@@ -57,48 +63,43 @@ const {  authStore } = require("../middlewares/auth");
 const router = express.Router();
 
 //Authen
-router.post("/store/register", register); //+post บช.ร้าน
-router.post("/store/login", login);
-router.get("/store/current-restau", currentRestau); //ยืนยันการเข้าสู่ระบบ
+router.post("/store/register", register); //+post บช.ร้าน รอ
+router.post("/store/login", login); 
+router.get("/store/current-restau", authStore, currentRestau); //ยืนยันการเข้าสู่ระบบ
 
 //createStore //สร้างร้าน
-router.get("/store/profile", authStore, getStore);
+router.get("/store/profile", authStore, getStore); //
 router.put("/store/profile",authStore, updateStore);
-router.patch("/store/profile/:id/stutus", removeStore); //ลบ ปุ่มลบร้านแต่จริงๆเก็บไว้แต่เปลี่ยนสถานะ
-//update password
+router.patch("/store/profile/change-email",authStore, updateEmail);
+router.patch("/store/profile/change-password",authStore,updatePassword);
+router.patch("/store/profile/change-username",authStore, updateUsername);
+router.patch("/store/profile/stutus", removeStore); //ลบ ปุ่มลบร้านแต่จริงๆเก็บไว้แต่เปลี่ยนสถานะ
+router.patch("/store/storeStatus", authStore, changeStoreStatus);
+router.patch("/store/storeOrderMode", authStore, changeOrderMode);
 
-router.put("/store/delivery-zones/:id", updateDeliveryZone);
-router.delete("/store/delivery-zones/:id", removeDeliveryZone);
-router.patch("/store/rainSurchargeActive", changeRainSurcharge);
-
-router.patch("/store/storeStatus", changeStoreStatus);
-router.patch("/store/storeOpen", changeStoreOpen);
-router.patch("/store/storeOrderMode", changeOrderMode);
-
-//MenuCategory
-router.get("/store/category", authStore, listMenuCategory);
-router.post("/store/category", authStore, addMenuCategory);
-router.put("/store/category/:id", authStore, updateMenuCategory);
-router.delete("/store/category/:id", authStore, removeMenuCategory);
+//MenuCategory 
+router.get("/store/category", authStore, listMenuCategory); //f
+router.post("/store/category", authStore, addMenuCategory); //f
+router.put("/store/category/:id", authStore, updateMenuCategory); //f
+router.delete("/store/category/:id", authStore, removeMenuCategory); //f
 
 //Menu
-router.get("/store/menu", authStore, getMenu);
-router.post("/store/addMenu", authStore, addMenu);
-router.put("/store/updateMenu/:id", updateMenu);
-router.delete("/store/deleteMenu/:id", removeMenu);
-router.patch("/store/availability/:id/status", changeAvailabilityStatus);
+router.get("/store/menu", authStore, getMenu); //f
+router.post("/store/addMenu", authStore, addMenu); //f
+router.put("/store/updateMenu/:id", authStore, updateMenu); //f
+router.delete("/store/deleteMenu/:id", authStore, removeMenu); //f 
+router.patch("/store/availability/:id/status", authStore, changeAvailabilityStatus); //f
 
 router.get("/store/menuby", getMenuBy);
 router.get("/store/search/filters", getSearchFilters);
 
 //orderRound
-router.get("/store/order-round", listOrderRound);
-router.post("/store/order-round", addOrderRound);
+router.get("/store/order-round", authStore, listOrderRound);
+router.post("/store/order-round", authStore, addOrderRound);
 router.put("/store/order-round/:id", updateOrderRound);
 router.delete("/store/order-round/:id", removeOrderRound);
 
 router.patch("/store/pattern", changePattern);
-router.put("/store/order-limit", orderLimit);
 router.patch("/store/round/:id/status", changeRoundStatus);
 
 //Order
@@ -106,10 +107,15 @@ router.get("/store/order", listOrder);
 router.get("/store/order/:id", readOrder);
 router.patch("/store/order/:id/Status", changeStatusOrder);
 
-//Delivery
+//Delivery&&DeliveryZone
 router.get("/store/delivery", listDelivery);
 router.get("/store/delivery/:id", readDelivery);
 router.patch("/store/delivery/:id/Status", changeStatusDelivery);
+
+router.post("/store/delivery-zones", authStore, addDeliveryZone);
+router.put("/store/delivery-zones/:id", authStore, updateDeliveryZone);
+router.delete("/store/delivery-zones/:id", authStore, removeDeliveryZone);
+router.patch("/store/rainSurchargeActive", authStore, changeRainSurcharge);
 
 //Payment
 router.post("/store/payment/:id", rejectedPayment);

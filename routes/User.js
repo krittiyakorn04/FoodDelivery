@@ -37,6 +37,7 @@ const {
   removeReview,
   updateReview,
 } = require("../controllers/User/UserReview");
+const { getallStores, getProfile } = require("../controllers/Store/StoreCreate");
 
 const router = express.Router();
 
@@ -46,6 +47,9 @@ router.post("/user/login", login);
 router.get("/user/current-user", currentUser);
 
 //ลูกค้าเข้าดูร้าน
+router.get("/store/listprofile", getallStores); //
+router.get("/store/profile/:id", getProfile); //หน่าร้าน
+
 
 //Address
 router.get("/user/address", listAddress);

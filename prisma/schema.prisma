@@ -36,6 +36,7 @@ enum storeStatus {
   OPEN
   CLOSED
   BUSY // ไม่รับออเดอร์ชั่วคราว
+  DELETED
 }
 
 enum deliveryType {
@@ -75,9 +76,9 @@ enum paymentStatus {
 }
 
 enum roundStatus {
+  PENDING //ยังไม่ถึงเวลาเปิด
   OPEN // กำลังรับออเดอร์
   CLOSED // ปิดรับแล้ว
-  FULL //เต็มแล้ว
 }
 
 enum deliveryZone {
@@ -168,6 +169,8 @@ model Store {
   bankAccount     String?
   bankAccountName String?
 
+  usernameChangedAt DateTime
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -179,7 +182,6 @@ model Store {
   reviews        Review[]
   carts          Cart[]
   deliveryZone   DeliveryZone[]
-
 }
 
 model DeliveryZone {
@@ -259,10 +261,13 @@ model OrderRound {
   hasOrderLimit   Boolean @default(false)
   maxOrders       Int?
   currentOrders   Int     @default(0)
+  cutoffMinutes   Int     @default(20)
 
-  status    roundStatus @default(OPEN)
-  createdAt DateTime    @default(now())
-  isManual  Boolean     @default(false)
+  status   roundStatus @default(OPEN)
+  isManual Boolean     @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   store    Store      @relation(fields: [storeId], references: [id])
   delivery Delivery[]
