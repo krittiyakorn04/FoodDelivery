@@ -169,7 +169,7 @@ model Store {
   bankAccount     String?
   bankAccountName String?
 
-  usernameChangedAt DateTime
+  usernameChangedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
