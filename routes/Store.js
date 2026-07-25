@@ -58,14 +58,14 @@ const {
   addDeliveryZone,
 } = require("../controllers/Store/StoreDelivery");
 const { rejectedPayment, changeStatusPayment } = require("../controllers/Store/StorePayment");
-const {  authStore } = require("../middlewares/auth");
+const {  authStore, storeCheck } = require("../middlewares/auth");
 
 const router = express.Router();
 
 //Authen
 router.post("/store/register", register); //+post บช.ร้าน รอ
 router.post("/store/login", login); 
-router.get("/store/current-restau", authStore, currentRestau); //ยืนยันการเข้าสู่ระบบ
+router.post("/store/current-restau", authStore,storeCheck, currentRestau); 
 
 //createStore //สร้างร้าน
 router.get("/store/profile", authStore, getStore); //
@@ -110,7 +110,7 @@ router.patch("/store/order/:id/Status", changeStatusOrder);
 //Delivery&&DeliveryZone
 router.get("/store/delivery", listDelivery);
 router.get("/store/delivery/:id", readDelivery);
-router.patch("/store/delivery/:id/Status", changeStatusDelivery);
+router.patch("/store/delivery/:id/Status", authStore, changeStatusDelivery);
 
 router.post("/store/delivery-zones", authStore, addDeliveryZone);
 router.put("/store/delivery-zones/:id", authStore, updateDeliveryZone);

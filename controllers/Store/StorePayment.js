@@ -1,6 +1,5 @@
 const prisma = require("../../config/prisma");
 
-
 exports.rejectedPayment = (req, res) => {
   try {
     res.send("Hello rejected Payment");
@@ -9,18 +8,31 @@ exports.rejectedPayment = (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
-//ดูprocess การรับออเดอร์ แบบอัตโนมัติ จัดส่งล่าช้า 
+
 exports.changeStatusPayment = async (req, res) => {
   try {
-    const { status } = req.body;
+    const { id, status } = req.body;
     const storeId = req.store.id;
 
-    const paymentStatus = await prisma.delivery.update({
+    const payment = await prisma.payment.findFirst({
       where: {
-        id: storeId,
+        id: Number(id),
+        storeId: req.store.id,
+      },
+    });
+
+    if (!payment) {
+      return res.status(404).json({
+        message: "ไม่พบรายการชำระเงิน",
+      });
+    }
+
+    await prisma.payment.update({
+      where: {
+        id: payment.id,
       },
       data: {
-        paymentStatus,
+        status,
       },
     });
     res.send("Hello change Status Payment");

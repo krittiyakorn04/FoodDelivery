@@ -3,6 +3,7 @@ const prisma = require("../../config/prisma");
 //DeliveryZone
 exports.addDeliveryZone = async (req, res) => {
   try {
+    //ระยะทาง
     const { nameZone, fee } = req.body;
     const storeId = req.store.id;
 

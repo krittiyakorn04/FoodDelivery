@@ -36,6 +36,20 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: "password is require!!!" });
     }
 
+    const user = await prisma.customer.findFirst({
+      where: { OR: 
+        [
+          {email}, 
+          {username}, 
+          {phone}
+      ] 
+      },
+    });
+    if (user) {
+      return res.status(400).json({ message: "This user already exits!!" });
+    } 
+            
+
     // เช็คใน DB ว่ามีมั้ย ซ้ำหรือเปล่า (เดี๋ยวเพิ่ม error เช็คซ้ำ)
     const store = await prisma.store.findFirst({
       where: { OR: 
@@ -109,6 +123,7 @@ exports.login = async (req, res) => {
         username
       }
     })
+    console.log(store)
     if(!username){
       return res.status(400).json({ message: "User NOT found or NOT Enabled" })
     }
@@ -146,25 +161,23 @@ exports.login = async (req, res) => {
   }
 };
 
-
 exports.currentRestau = async (req, res) => {
   try {
-
     const store = await prisma.store.findFirst({
-      where:{
-        username: req.store.username
-      },
-      select:{
-        id:true,
-        email:true,
-        username:true,
-        role:true
+      where: { id: req.store.id },  
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        storeName: true,
+        role: true,
+        status: true
       }
     })
-
-    res.json({store});
+    res.json({ store })
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server Error" });
+    console.log(error)
+    res.status(500).json({ message: "Server Error" })
   }
-}; 
+}
+

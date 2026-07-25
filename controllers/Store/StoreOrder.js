@@ -59,14 +59,22 @@ exports.readOrder = async (req, res) => {
   }
 };
 
+//ดูprocess การรับออเดอร์ แบบอัตโนมัติ จัดส่งล่าช้า ติดไว้
 exports.changeStatusOrder = async (req, res) => {
   try {
-    const { status } = req.body;
+    const { id } = req.params;
     const storeId = req.store.id;
+
+    const order = await prisma.order.findFirst({
+      where: {
+        id: Number(id),
+        storeId: req.store.id,
+      },
+    });
 
     const orderStatus = await prisma.order.update({
       where: {
-        id: storeId,
+        id: Number(id),
       },
       data: {
         orderStatus,

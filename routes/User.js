@@ -19,7 +19,7 @@ const {
 const {
   createOrder,
   getOrder,
-  changeStatusOrderUser,
+
   uploadSlip,
   changePaymentMethod,
 } = require("../controllers/User/UserOrder");
@@ -38,13 +38,16 @@ const {
   updateReview,
 } = require("../controllers/User/UserReview");
 const { getallStores, getProfile } = require("../controllers/Store/StoreCreate");
+const { authUser, userCheck } = require("../middlewares/auth");
 
 const router = express.Router();
 
 //Authen
 router.post("/user/register", register);
 router.post("/user/login", login);
-router.get("/user/current-user", currentUser);
+router.post("/user/current-user",authUser,userCheck, currentUser); 
+
+
 
 //ลูกค้าเข้าดูร้าน
 router.get("/store/listprofile", getallStores); //
@@ -52,14 +55,14 @@ router.get("/store/profile/:id", getProfile); //หน่าร้าน
 
 
 //Address
-router.get("/user/address", listAddress);
-router.post("/user/address", addAddress);
-router.put("/user/address/:id", updateAddress);
-router.delete("/user/address/:id", removeAddress);
+router.get("/user/address",authUser, listAddress);
+router.post("/user/address",authUser, addAddress);
+router.put("/user/address/:id",authUser, updateAddress);
+router.delete("/user/address/:id",authUser, removeAddress);
 
 //Profile
-router.get("/user/profile", profileUser);
-router.put("/user/profile", updateProfileUser);
+router.get("/user/profile",authUser, profileUser);
+router.put("/user/profile",authUser, updateProfileUser);
 
 //Cart
 router.get("/user/cart", getUserCart);
@@ -70,8 +73,6 @@ router.delete("/user/cart/:id", removeUserCart);
 //Order
 router.get("/user/order", getOrder);
 router.post("/user/order", createOrder);
-router.patch("/user/order/:id/Status", changeStatusOrderUser);
-router.patch("/user/payment/:id/Method", changePaymentMethod);
 router.post("/user/payment/:id", uploadSlip);
 
 //Delivery
