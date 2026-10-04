@@ -1,0 +1,40 @@
+import axios from "axios";
+
+const API = "http://localhost:5000/api";
+
+export const getStoreReport = async (token, params = {}) => {
+  return axios.get(`${API}/store/report`, {
+    params,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const getStoreOrderReports = async (token) => {
+  return axios.get("http://localhost:5000/api/store/order-reports", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const updateStoreOrderReport = async (
+  token,
+  reportId,
+  status,
+  adminNote,
+) => {
+  return axios.patch(
+    `http://localhost:5000/api/store/order-reports/${reportId}`,
+    {
+      status,
+      adminNote,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+};
